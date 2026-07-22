@@ -1,0 +1,63 @@
+pipeline {
+
+    agent any
+
+    environment {
+        BUILD_ID = "dontKillMe"
+        JENKINS_NODE_COOKIE = "dontKillMe"
+    }
+
+    stages {
+
+        stage('Debug') {
+            steps {
+                bat 'echo Node Version:'
+                bat 'node -v'
+
+                bat 'echo NPM Version:'
+                bat 'npm -v'
+
+                bat 'echo Git Version:'
+                bat 'git --version'
+            }
+        }
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Installing Dependencies') {
+            steps {
+                bat 'npm install'
+            }
+        }
+
+        stage('Starting Application') {
+            steps {
+                bat '''
+                    start /B cmd /c "npm run dev > app.log 2>&1"
+                '''
+            }
+        }
+
+        stage('Verify Application') {
+            steps {
+                bat 'timeout /t 5 >nul'
+                bat 'tasklist | findstr node || exit /b 0'
+                bat 'type app.log'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully.'
+        }
+
+        failure {
+            echo 'Pipeline failed.'
+        }
+    }
+}
