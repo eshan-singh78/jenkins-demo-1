@@ -3,6 +3,13 @@ pipeline {
     agent any
 
     stages{
+
+        stage('Debug'){
+            steps{
+                sh 'node -v'
+                sh 'npm -v'
+            }
+        }
         stage('Checkout'){
             steps{
                 checkout scm
