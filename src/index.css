@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+@layer utilities {
+  .font-black-heading {
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+  }
+
+  .brand-gradient {
+    background: linear-gradient(135deg, #1a1a1a 0%, #444444 100%);
+  }
+
+  .brand-gradient-hover {
+    background: linear-gradient(135deg, #000000 0%, #222222 100%);
+  }
+
+  .gradient-bg-soft {
+    background: linear-gradient(120deg, #f0f4f8 0%, #ffffff 100%);
+  }
+
+  .hero-clip-stage {
+    clip-path: polygon(10% 0, 100% 0, 100% 100%, 0 100%);
+  }
+
+  .tracking-ultra-wide {
+    letter-spacing: 0.35em;
+  }
+
+  .tracking-wide-caps {
+    letter-spacing: 0.2em;
+  }
+}
+
+body {
+  background-color: #fdfdfd;
+  color: #111111;
+  font-family: 'Helvetica Neue', Arial, -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}

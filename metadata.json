@@ -1,0 +1,6 @@
+{
+  "name": "AURA Modern Goods",
+  "description": "Minimalist, bold e-commerce store for high-end DTC modern goods with light gradients, rich product filters, slide-out cart, checkout, reviews, and account management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
