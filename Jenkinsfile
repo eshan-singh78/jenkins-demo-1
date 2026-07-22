@@ -30,10 +30,4 @@ pipeline {
         }
     }
 
-    post{
-        always{
-            echo 'Cleaning up...'
-            sh 'rm -rf node_modules'
-        }
-    }
 }
