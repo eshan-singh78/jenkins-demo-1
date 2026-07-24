@@ -9,6 +9,31 @@ pipeline {
 
     stages {
 
+        stage('Docker Debug') {
+            steps {
+                bat '''
+                echo Current User:
+                whoami
+
+                echo.
+                echo User Information:
+                whoami /all
+
+                echo.
+                echo Docker Version:
+                docker --version
+
+                echo.
+                echo Docker Information:
+                docker info
+
+                echo.
+                echo Running Containers:
+                docker ps
+                '''
+            }
+        }
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -39,21 +64,30 @@ pipeline {
                 docker rm -f %CONTAINER_NAME%
 
                 docker run -d ^
-                --name %CONTAINER_NAME% ^
-                -p 80:80 ^
-                %IMAGE_NAME%:latest
+                    --name %CONTAINER_NAME% ^
+                    -p 80:80 ^
+                    %IMAGE_NAME%:latest
                 '''
             }
         }
     }
 
     post {
+
         success {
-            echo "Deployment Successful"
+            echo 'Deployment Successful'
         }
 
         failure {
-            echo "Deployment Failed"
+            echo 'Deployment Failed'
+        }
+
+        always {
+            bat '''
+            echo.
+            echo ===== Final Container Status =====
+            docker ps -a
+            '''
         }
     }
 }
