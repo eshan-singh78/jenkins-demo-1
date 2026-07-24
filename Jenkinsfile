@@ -3,17 +3,11 @@ pipeline {
     agent any
 
     environment {
-        BUILD_ID = "dontKillMe"
+        IMAGE_NAME = "react-example"
+        CONTAINER_NAME = "react-app"
     }
 
     stages {
-
-        stage('Debug') {
-            steps {
-                sh 'node -v'
-                sh 'npm -v'
-            }
-        }
 
         stage('Checkout') {
             steps {
@@ -21,20 +15,45 @@ pipeline {
             }
         }
 
-        stage('Installing Dependencies') {
+        stage('Install Dependencies') {
             steps {
                 sh 'npm install'
             }
         }
 
-        stage('Starting Application') {
+        stage('Build React App') {
             steps {
-                sh '''
-                    export BUILD_ID=dontKillMe
-                    nohup npm run dev > app.log 2>&1 &
-                '''
+                sh 'npm run build'
             }
         }
 
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t ${IMAGE_NAME}:latest .'
+            }
+        }
+
+        stage('Deploy Container') {
+            steps {
+                sh '''
+                docker rm -f ${CONTAINER_NAME} || true
+
+                docker run -d \
+                    --name ${CONTAINER_NAME} \
+                    -p 80:80 \
+                    ${IMAGE_NAME}:latest
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Deployment Successful"
+        }
+
+        failure {
+            echo "Deployment Failed"
+        }
     }
 }

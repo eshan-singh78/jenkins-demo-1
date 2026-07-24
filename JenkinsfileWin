@@ -3,24 +3,11 @@ pipeline {
     agent any
 
     environment {
-        BUILD_ID = "dontKillMe"
-        JENKINS_NODE_COOKIE = "dontKillMe"
+        IMAGE_NAME = "react-example"
+        CONTAINER_NAME = "react-app"
     }
 
     stages {
-
-        stage('Debug') {
-            steps {
-                bat 'echo Node Version:'
-                bat 'node -v'
-
-                bat 'echo NPM Version:'
-                bat 'npm -v'
-
-                bat 'echo Git Version:'
-                bat 'git --version'
-            }
-        }
 
         stage('Checkout') {
             steps {
@@ -28,36 +15,45 @@ pipeline {
             }
         }
 
-        stage('Installing Dependencies') {
+        stage('Install Dependencies') {
             steps {
                 bat 'npm install'
             }
         }
 
-        stage('Starting Application') {
+        stage('Build React App') {
             steps {
-                bat '''
-                    start /B cmd /c "npm run dev > app.log 2>&1"
-                '''
+                bat 'npm run build'
             }
         }
 
-        stage('Verify Application') {
+        stage('Build Docker Image') {
             steps {
-                bat 'timeout /t 5 >nul'
-                bat 'tasklist | findstr node || exit /b 0'
-                bat 'type app.log'
+                bat 'docker build -t %IMAGE_NAME%:latest .'
+            }
+        }
+
+        stage('Deploy Container') {
+            steps {
+                bat '''
+                docker rm -f %CONTAINER_NAME%
+
+                docker run -d ^
+                --name %CONTAINER_NAME% ^
+                -p 80:80 ^
+                %IMAGE_NAME%:latest
+                '''
             }
         }
     }
 
     post {
         success {
-            echo 'Pipeline completed successfully.'
+            echo "Deployment Successful"
         }
 
         failure {
-            echo 'Pipeline failed.'
+            echo "Deployment Failed"
         }
     }
 }
