@@ -9,6 +9,31 @@ pipeline {
 
     stages {
 
+        stage('Docker Debug') {
+    steps {
+        sh '''
+        echo "Current User:"
+        whoami
+
+        echo
+        echo "Groups:"
+        id
+
+        echo
+        echo "Docker Socket:"
+        ls -l /var/run/docker.sock
+
+        echo
+        echo "Docker Version:"
+        docker --version
+
+        echo
+        echo "Docker PS:"
+        docker ps
+        '''
+    }
+}
+
         stage('Checkout') {
             steps {
                 checkout scm
